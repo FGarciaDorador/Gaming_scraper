@@ -9,3 +9,4 @@ The objective of this project is to obtain accurate information of videogames in
 3. Scrap different pages like G2a, Humble bundle, eneba, steam to the fullest, etc.
 4. Improve performance by using async.
 5. Compare performance of scrappy vs BeautifulSoup.
+6. Find an accurate way to identify a videogame, taking into account that a game can be written slightly different from one page to another.
