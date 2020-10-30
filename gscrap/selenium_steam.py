@@ -2,17 +2,9 @@ from selenium import webdriver
 import time
 import yalm
 
-class Scrapper:
-    def __init__(self):
-        with open('config.yml', 'r') as config_file:
-            config = yalm.load(config_file)
-            executable_path = config['webdriver']['geckodriver_path']
-            driver = config['webdriver']['browser']
-
-class SteamScrapper(Scrapper):
+class steam_scrapper ():
 
     def __init__(self):
-        super(self, SteamScrapper).__init__()
         self.driver = webdriver.Firefox(executable_path = r"C:\Users\Fernando\Desktop\geckodriver-v0.27.0-win64\geckodriver.exe")
         self.url = "https://store.steampowered.com/"
         self.driver.get(self.url)
