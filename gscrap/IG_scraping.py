@@ -7,7 +7,8 @@ import os
 import zipfile
 import time
 from selenium import webdriver
-from selenium_steam import steam_scrapper
+
+from gscrap.selenium_steam import steam_scrapper
 
 def run():
     sc = steam_scrapper()
