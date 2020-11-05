@@ -4,7 +4,7 @@ import time
 class steam_scrapper ():
 
     def __init__(self):
-        self.driver = webdriver.Firefox(executable_path = r"C:\Users\Fernando\Desktop\geckodriver-v0.27.0-win64\geckodriver.exe")
+        self.driver = webdriver.Firefox()
         self.url = "https://store.steampowered.com/"
         self.driver.get(self.url)
 
