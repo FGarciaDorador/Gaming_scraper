@@ -11,7 +11,6 @@ from selenium import webdriver
 from gscrap.selenium_steam import steam_scrapper
 
 def run():
-    sc = steam_scrapper()
 
     # denominar el archivo de acuerdo a la fecha de raspado web
     date_scrape = datetime.datetime.now().date()
@@ -74,8 +73,6 @@ def run():
             except IndexError:
                 precio = ''
 
-            precio_steam = sc.price(titulo) #llamamos a la función del otro script
-
             ### DESCUENTO ###
             try:
                 descuento = item.find('div', class_='discount').text
@@ -98,7 +95,7 @@ def run():
                 release_date = None
                 comment = None
                 comment_rating = None
-                csv_writer.writerow([titulo, precio, precio_steam, descuento, region, dlc, plataforma,
+                csv_writer.writerow([titulo, precio, descuento, region, dlc, plataforma,
                                      link, dispo, generos, release_date, rating, comment, comment_rating])
                 continue
 
@@ -169,7 +166,6 @@ def run():
 
 
     csv_file.close()
-    sc.quit()
 
 
 
