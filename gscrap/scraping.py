@@ -1,16 +1,11 @@
-from bs4 import BeautifulSoup
 import requests
-import csv
 import re
 import datetime
-import os
-import zipfile
-import time
-from selenium import webdriver
 
 import pandas as pd
 import yalm
 
+from bs4 import BeautifulSoup
 from pathlib import Path
 from typing import List
 from gscrap.selenium_steam import steam_scrapper
