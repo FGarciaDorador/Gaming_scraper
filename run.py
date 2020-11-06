@@ -1,5 +1,6 @@
-from gscrap import IG_scraping
+from gscrap.scraping import scrap_games # in the future it should be 
+# from gscrap import scrap
 
 if __name__ == '__main__':
     # TODO(albert): Detect website and pass it as argument
-    IG_scraping.run()
+    scrap_games()
