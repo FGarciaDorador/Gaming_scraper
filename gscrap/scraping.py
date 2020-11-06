@@ -1,3 +1,7 @@
+# TODO: Add documentation EVERYWHERE
+# TODO: Add type hinting EVERYWHERE
+# TODO: Clean imports 
+#
 import requests
 import re
 import datetime
@@ -135,7 +139,12 @@ def scrap_games(*stores, cols=[], filename='out.csv', background=False):
 
     df = pd.DataFrame(columns=cols)
 
+    with open('config.ylm', 'r') as c:
+        config = yalm.load(c)
+
     for store in stores:
+        # TODO: Check if those entries exist on config yalm and make
+        # meaningful error messages
         base_url = config[store]["base_url"]
         cat_url = config[store]["catalog_url"]
         url = base_link + page_link
