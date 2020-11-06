@@ -116,6 +116,8 @@ def get_info(col):
     # TODO: Here there should be a way to handle new soups? I dunno.
     try:
         value = func_map[col]
+    except NameError:
+        raise NameError(f'{col} is not a possible column name')
     except:
         value = 'Not found'
     finally:
@@ -134,8 +136,7 @@ def scrap_games(*stores, background=False):
         cat_url = config[store]["catalog_url"]
         url = base_link + page_link
 
-        source = requests.get(url)
-        soup = BeautifulSoup(source.content)
+        soup = BeautifulSoup(requests.get(url))
 
         if background:
             save_background(output_path, store=store)
@@ -162,4 +163,3 @@ def scrap_games(*stores, background=False):
             soup = BeautifulSoup(source.content)
             print(url[-8:])
 
-        csv_file.close()
