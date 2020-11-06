@@ -131,7 +131,7 @@ def get_info(col):
     finally:
         return value
 
-def scrap_games(*stores, cols=[], background=False):
+def scrap_games(*stores, cols=[], filename='out.csv', background=False):
 
     df = pd.DataFrame(columns=cols)
 
@@ -155,4 +155,4 @@ def scrap_games(*stores, cols=[], background=False):
             else:
                 break
 
-    df.to_csv('test.csv')
+    df.to_csv(filename)
