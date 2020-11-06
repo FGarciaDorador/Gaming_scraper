@@ -130,7 +130,7 @@ def get_info(col: str, game: Tag, store: str) -> str:
         return value
 
 
-def scrap_games(*stores: str, cols: List[str]=[]):
+def scrap_games(*stores: str, cols: List[str]=[]) -> DataFrame:
 
     df = DataFrame(columns=cols)
 
