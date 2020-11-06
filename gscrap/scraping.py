@@ -123,12 +123,8 @@ def get_info(col):
     finally:
         return value
 
-def scrap_games(*stores, background=False):
+def scrap_games(*stores, cols=[], background=False):
 
-    with open("config.ylm", "r") as config_file:
-        config = yalm.load(config_file)
-
-    cols = config["columns"]
     df = pd.DataFrame(columns=cols)
 
     for store in stores:
