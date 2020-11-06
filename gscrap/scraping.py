@@ -1,48 +1,19 @@
 # TODO: Add documentation EVERYWHERE
 # TODO: Add type hinting EVERYWHERE
-# TODO: Clean imports 
-#
+
 import requests
 import re
-import datetime
-
-import pandas as pd
-import yalm
-
+from tqdm.auto import tqdm
+from pandas import DataFrame
+from yaml import load, Loader
 from bs4 import BeautifulSoup
-from pathlib import Path
-from typing import List
+from bs4.element import Tag
 from gscrap.selenium_steam import steam_scrapper
 
-# Not the most descriptive name.. TODO(fer): Find a better name
-func_map = {
-        'title': get_title,
-        'price': get_price,
-        'discount': get_discount,
-        'store': get_store,
-        'region': get_region,
-        'dlc': get_dlc,
-        'url': get_url,
-        'platform': get_platform,
-        'availability': get_availability,
-        'release': get_release,
-        'comment': get_comment,
-        'rating': get_rating,
-        'genre': get_genre,
-        }
+from typing import List, Generator
 
-
-def save_background(dir_path: str = ".", store: str = "insta-gaming"):
-    """Saves the background image of the page to the dir_path with the name `store_background.jpg."""
-    background_url = re.findall(
-        "http.*?jpg", soup.find("div", {"id": "backgroundLink"})["style"])[0]
-    background_imagen = requests.get(background_url)
-    with open("background.jpg", "wb") as f:
-        f.write(background_imagen.content)
-
-
-def get_games(store, soup):
-    if store == "insta-gaming":
+def get_games(store: str, soup: BeautifulSoup) -> Generator[None, Tag, None]:
+    if store == "instant-gaming":
         games = soup.find_all("div", class_=["category-best", "item mainshadow"])
     else:
         games = []
@@ -50,118 +21,144 @@ def get_games(store, soup):
         yield game
 
 
-def get_title(game: str, store: str) -> str:
-    if store == "insta-gaming":
+def get_title(game: Tag, store: str) -> str:
+    if store == "instant-gaming":
         return game.find("div", class_="name").text
 
-    else:
-        return 'Untitled'
+    return f'{store} not implemented'
 
-def get_price(game, store):
-    if store == 'insta-gaming':
-        price = re.findall("\d+\.?\d+",
-                           game.find("div", class_="price").text)[0]
-    return price
 
-def get_discount(game, store):
-    if store == 'insta-gaming':
+def get_price(game: Tag, store: str) -> str:
+    if store == "instant-gaming":
+        return re.findall("\d+\.?\d+", game.find("div", class_="price").text)[0]
+    return f'{store} not implemented'
+
+def get_discount(game: Tag, store: str) -> str:
+    if store == "instant-gaming":
         return game.find("div", class_="discount").text
-    else:
-        return f'Discount not implemented for {store}'
+    return f"Discount not implemented for {store}"
 
-def save_game_cover(game, path, store):
-    imagen_url = game.find("img", class_="picture mainshadow").get("src")
 
-    imagen = requests.get(imagen_url)
-    with open(folder_name + "/" + str(numero_id) + ".jpg", "wb") as f:
-        f.write(imagen.content)
-
-def get_store(game, store):
+def get_store(game: Tag, store: str) -> str:
     return store
 
-def get_region(game, store):
-    if store == 'insta-gaming':
+
+def get_region(game: Tag, store: str) -> str:
+    if store == "instant-gaming":
         return game["data-region"]
+    return f'{store} not implemented'
 
-def get_dlc(game, store):
-    if store == 'insta-gaming':
-        return game['data-dlc']
+def get_dlc(game: Tag, store: str) -> str:
+    if store == "instant-gaming":
+        return game["data-dlc"]
+    return f'{store} not implemented'
 
-def get_url(game, store):
-    if store == 'insta-gaming':
-        return game.a['href']
+def get_url(game: Tag, store: str) -> str:
+    if store == "instant-gaming":
+        return game.a["href"]
+    return f'{store} not implemented'
 
-def get_platform(game, store):
+
+def get_platform(game: Tag, store: str) -> str:
     pass
 
-def get_availability(game, store):
+
+def get_availability(game: Tag, store: str) -> str:
     pass
 
-def get_release(game, store):
+
+def get_release(game: Tag, store: str) -> str:
     pass
 
-def get_comment(game, store):
+
+def get_comment(game: Tag, store: str) -> str:
     pass
 
-def get_rating(game, store):
+
+def get_rating(game: Tag, store: str) -> str:
     pass
 
-def get_genre(game, store):
+
+def get_genre(game: Tag, store: str) -> str:
     pass
 
-next_page_exists(soup, store):
-    if store == 'instant-gamming':
-        return soup.find(class_="pagination bottom").find_all("li")[-1].text == '>'
+
+# Not the most descriptive name.. TODO(fer): Find a better name
+func_map = {
+    "title": get_title,
+    "price": get_price,
+    "discount": get_discount,
+    "store": get_store,
+    "region": get_region,
+    "dlc": get_dlc,
+    "url": get_url,
+    "platform": get_platform,
+    "availability": get_availability,
+    "release": get_release,
+    "comment": get_comment,
+    "rating": get_rating,
+    "genre": get_genre,
+}
+
+
+def next_page_exists(soup: BeautifulSoup, store: str) -> bool:
+    if store == "instant-gaming":
+        return soup.find(class_="pagination bottom").find_all("li")[-1].text == ">"
     else:
         return False
 
-load_next_page(soup):
-    if store == 'instant-gamming':
-        last_element = soup.find(class_="pagination bottom").find_all("li")[-1]
-        next_url = last_element.find('a')['href']
-        url = base_link + next_url
-        source = requests.get(url)
-        return BeautifulSoup(source.content)
 
-def get_info(col):
+def load_next_page(soup: BeautifulSoup, store: str, base_url: str) -> BeautifulSoup:
+    if store == "instant-gaming":
+        last_element = soup.find(class_="pagination bottom").find_all("li")[-1]
+        next_url = last_element.find("a")["href"]
+        url = base_url + next_url
+        source = requests.get(url)
+        return BeautifulSoup(source.content, "html.parser")
+
+
+def get_info(col: str, game: Tag, store: str) -> str:
     """Wrapper for the mapping of function to avoid raising exceptions"""
     # TODO: Here there should be a way to handle new soups? I dunno.
     try:
-        value = func_map[col]
+        value = func_map[col](game, store)
     except NameError:
-        raise NameError(f'{col} is not a possible column name')
+        raise NameError(f"{col} is not a possible column name")
     except:
-        value = 'Not found'
+        value = "Not found"
     finally:
         return value
 
-def scrap_games(*stores, cols=[], filename='out.csv', background=False):
 
-    df = pd.DataFrame(columns=cols)
+def scrap_games(*stores: str, cols: List[str]=[]):
 
-    with open('config.ylm', 'r') as c:
-        config = yalm.load(c)
+    df = DataFrame(columns=cols)
 
-    for store in stores:
+    with open("config.ylm", "r") as c:
+        config = load(c, Loader=Loader)
+
+    pb_stores = tqdm(stores)
+    for store in pb_stores:
         # TODO: Check if those entries exist on config yalm and make
         # meaningful error messages
         base_url = config[store]["base_url"]
-        cat_url = config[store]["catalog_url"]
-        url = base_link + page_link
+        url =  base_url + config[store]["catalog_url"]
 
-        soup = BeautifulSoup(requests.get(url))
+        soup = BeautifulSoup(requests.get(url).content, "html.parser")
 
-        if background:
-            save_background(output_path, store=store)
-
-        while True: #TODO(fer): Look for something better? (max_pages?)
-
+        page_num = 1
+        while True:  # TODO(fer): Look for something better? (max_pages?)
+            pb_stores.set_description(f"page {page_num} in {store}")
             for game in get_games(store, soup):
-                df.append({col:func_map[col](game, store) for col in cols})
+                df = df.append(
+                    {col: get_info(col, game, store) for col in cols}, ignore_index=True
+                )
 
             if next_page_exists(soup, store):
-                soup = load_next_page(soup, store)
+                soup = load_next_page(soup, store, base_url)
             else:
                 break
 
-    df.to_csv(filename)
+            page_num += 1
+
+    return df
