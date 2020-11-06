@@ -37,7 +37,7 @@ def save_background(dir_path: str = ".", store: str = "insta-gaming"):
         f.write(background_imagen.content)
 
 
-def get_games(store):
+def get_games(store, soup):
     if store == "insta-gaming":
         games = soup.find_all("div", class_=["category-best", "item mainshadow"])
     else:
@@ -105,6 +105,19 @@ def get_rating(game, store):
 def get_genre(game, store):
     pass
 
+next_page_exists(soup, store):
+    if store == 'instant-gamming':
+        return soup.find(class_="pagination bottom").find_all("li")[-1].text == '>'
+    else:
+        return False
+
+load_next_page(soup):
+    if store == 'instant-gamming':
+        last_element = soup.find(class_="pagination bottom").find_all("li")[-1]
+        next_url = last_element.find('a')['href']
+        url = base_link + next_url
+        source = requests.get(url)
+        return BeautifulSoup(source.content)
 
 def get_info(col):
     """Wrapper for the mapping of function to avoid raising exceptions"""
@@ -132,25 +145,14 @@ def scrap_games(*stores, cols=[], background=False):
         if background:
             save_background(output_path, store=store)
 
-        while True:
-            for game in get_games(store):
-                ginfo = {col:func_map[col](game, store) for col in cols}
-                df.append(ginfo)
+        while True: #TODO(fer): Look for something better? (max_pages?)
 
-            # identificar el último boton para acceder a la páginas
-            last_element = soup.find(class_="pagination bottom").find_all("li")[-1]
+            for game in get_games(store, soup):
+                df.append({col:func_map[col](game, store) for col in cols})
 
-            # si el texto del ultimo elemento es > quiere decir que existe otra página y por lo tanto podemos continuar con el raspado
-            if last_element.text == ">":
-                page_link = last_element.find("a")["href"]
-                print("Siguiente página")
+            if next_page_exists(soup, store):
+                soup = load_next_page(soup, store)
             else:
-                print("No hay más páginas. Fin del scraping")
                 break
 
-            # accedemos a la siguiente página
-            url = base_link + page_link
-            source = requests.get(url)
-            soup = BeautifulSoup(source.content)
-            print(url[-8:])
-
+    df.to_csv('test.csv')
