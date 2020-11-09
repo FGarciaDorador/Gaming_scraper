@@ -1,0 +1,20 @@
+columns:
+  - title
+  - region
+  - dlc
+  - platform
+  - store
+  - release
+  - price
+  - discount
+  - url
+  - availability
+  - rating
+  - comment
+
+stores:
+  - instant-gaming
+
+instant-gaming:
+  base_url: 'https://www.instant-gaming.com'
+  catalog_url: '/en/search/?all_types=1&all_cats=1&min_price=0&max_price=100&noprice=1&min_discount=0&max_discount=100&min_reviewsavg=10&max_reviewsavg=100&noreviews=1&available_in=ES&gametype=all&sort_by=&query='
